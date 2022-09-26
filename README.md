@@ -17,12 +17,13 @@ This workshop was held at CoHEsion 2022 on Friday 10/21/2022, 8:30am - 4:30pm.
 https://cohesioncentral.org/
 
 There are several documents in this workshop that should be attempted in the following order:
-1. github.doc.md
-2. docker-hub.doc.md
-3. install-docker-desktop.doc.md
-4. build-custom-tomcat.doc.md
-5. build-banner-app.doc.md
-6. updating-images.doc.md
+1. Review the presentation slides in CoHEsion Containerizing Banner with Docker - Gillfillan, M.pdf
+2. github.doc.md
+3. docs/docker-hub.doc.md
+4. docs/install-docker-desktop.doc.md
+5. docs/build-custom-tomcat.doc.md
+6. docs/build-banner-app.doc.md
+7. docs/updating-images.doc.md
 
 By the end of this workshop, you should be able to get started creating and maintaining Banner applications in a containerized environment. Advanced topics are not discussed here, but are encouraged to be investigated on your own as a further learning task.
 
