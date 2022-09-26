@@ -15,3 +15,14 @@ So you want to containerize your Banner applications? Have you heard a lot of ta
 This workshop was held at CoHEsion 2022 on Friday 10/21/2022, 8:30am - 4:30pm.
 
 https://cohesioncentral.org/
+
+There are several documents in this workshop that should be attempted in the following order:
+1. docker-hub.doc.md
+2. install-docker-desktop.doc.md
+3. build-custom-tomcat.doc.md
+4. build-banner-app.doc.md
+5. updating-images.doc.md
+
+By the end of this workshop, you should be able to get started creating and maintaining Banner applications in a containerized environment. Advanced topics are not discussed here, but are encouraged to be investigated on your own as a further learning task.
+
+> You won't fully understand something until it breaks and you have to fix it. So break it!
