@@ -86,7 +86,7 @@ All source code related to a given project should be stored in a single reposito
 
 On the Main Github screen, click the Repositories tab at the top of the screen. This will display a list of repositories to which you current have access. On the right of the screen, click the New button.
 
-![](img/github/repo-list-menu.png){ width=50% height=50% }
+![](img/github/repo-list-menu.png)
 
 ### Repository Name
 
