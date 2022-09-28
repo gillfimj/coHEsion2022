@@ -77,3 +77,48 @@ If you're new to Git and/or Github, feel free to read the guide that is provided
 * Warning, this is a rabbit hole you can wind down for a while, so tread cautiously.
 
 We highly encourage the use of 2 Factor Authentication whenever possible.  Github provides the flexibility of choosing which Authenticator you want to use.  Just make sure you remember which Authenticator you link your account to and be sure to download your recovery codes, so when you forget which Authenticator you've link your account to you have a way to get back into your account.
+
+# Create New Repository
+
+All source code related to a given project should be stored in a single repository. The repository will provide an step-by-step account of who updated what and when it when was updated. This can be a valuable asset to auditors as well as developers, especially if code needs to be rolled back for any given reason.
+
+## Starting a new repository
+
+On the Main Github screen, click the Repositories tab at the top of the screen. This will display a list of repositories to which you current have access. On the right of the screen, click the New button.
+
+![](img/github/repo-list-menu.png){ width=50% height=50% }
+
+### Repository Name
+
+After you click on the New button, you will need to give your repository a name. This name needs to be unique to your account. No two repos can have the same name. Enter the new repository name.
+
+![](img/github/repo-name.png)
+
+### Repository Description
+
+The repository description is option. However, it can be helpful to know why this repo exists and what its purpose is. Keep it short, but descriptive.
+
+![](img/github/repo-desc.png)
+
+### Repository type
+
+You can identify whether this repo will be public or private. Public repos can be seen by anyone. Private repos are, well, private. You must grant specific access to a private repo. This can be one way to provide a level of security around your coding project.
+
+![](img/github/repo-type.png)
+
+### Add a README file
+
+Adding a README file to the repository will give your visitors an idea of what your repository contains. This is where you can provide instructions on how to download the contents, prepare the environment, run your code and any other important information to get your visitors started with your project.
+
+![](img/github/add-readme.png)
+
+### Other Misc Settings
+
+You can also add a template for the .gitignore file. If there are files that you do not want to include in the repository, you can add them to the .gitignore file. This is good for ignoring sensitive data that should never appear in a code repository or temporary files that have no real purpose.
+
+You can also include a license file which tells others what they can and cannot do with your code.
+
+Once you are satisfied with the options, click Create Repository to recreate your new repository.
+
+![](img/github/other-settings.png)
+
