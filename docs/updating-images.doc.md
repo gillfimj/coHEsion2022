@@ -7,6 +7,15 @@ draft: true
 lang: en
 ---
 # Updating Images
+
+There comes a time in the life of every application when certain components need to be upgraded. Some of these upgrades can take a significant amount of labor and time to perform the same tasks over and over again across numerous hosts.
+
+Containerized applications provide the environment whereby this type of upgrade cycle can be done in just a few short steps and then put into effect by just restarting the application. This will save time and labor and open up resources to do many other tasks.
+
+In this exercise, we'll explore the steps needed to upgrade a Banner application that needs both a Tomcat upgrade and a JDK version upgrade. Manually, these tasks could take weeks to perform across the entire Banner framework. However, we'll show this can be done with just a few updates to a couple lines of code.
+
+Let's get started.
+
 ## Updating the Tomcat Image
 
 It's time to upgrade Tomcat from one version to another. Seems like that might be a daunting task. Not really.
@@ -15,7 +24,7 @@ For this exercise, we're going to upgrade the Tomcat image from using JDK 8 to J
 
 Open the Tomcat Dockerfile and find the line where the version of Tomcat is specified.
 
-```{.dockerfile tomcat1/Dockerfile}
+```{.dockerfile title=tomcat1/Dockerfile}
 FROM tomcat:8.5-jdk8-openjdk
 ```
 
@@ -24,6 +33,7 @@ Go out to Docker Hub and search for the official tomcat image page
 <a href="https://hub.docker.com/_/tomcat" target="_blank">https://hub.docker.com/_/tomcat</a>
 
 Search for the latest version of Tomcat, for the JDK 11 openjdk version
+
 * Click on the Tags tab
 * In the Filter box type: 9-jdk11-openjdk
 * Scroll down until you find the right image
@@ -61,7 +71,9 @@ docker images
 mytomcat              9.0.65-1   1370ebfdaaf4   8 minutes ago   824MB
 ```
 
-Terrific! We have an new Tomcat image we can use with Banner applications. Let's move on and upgrade our Banner container.
+Terrific! We have an new Tomcat image with an updated version of Tomcat AND an updated version of JDK that we can use with Banner applications. WOW - that was easy!
+
+Let's move on and upgrade our Banner container.
 
 ## Updating the Banner Containers
 
@@ -92,9 +104,9 @@ docker logs applicationNavigator -f
 bin/catalina.sh: line 421: /usr/local/openjdk-8/bin/java: No such file or directory
 ```
 
-Something went wrong. Apparently, we missed changing an environment variable. Let's take care of that.
+Something went wrong. Apparently, we missed changing an environment variable somewhere. Let's take care of that.
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile}
 ENV TOMCAT_JAVA_HOME="/usr/local/openjdk-11" \
 
 ```
@@ -111,7 +123,22 @@ This time it turned out better. Let's jump in the container and check a few thin
 If everything looks good - congrats - you just upgraded Tomcat and JDK! Rinse/Repeat for every other application.
 
 ## Application Update recap
+
 * Update FROM version
 * Update JAVA_HOME environment variable
 * Rebuild container
+
+That's all there is to it. Now you can plan your next vacation with all the extra time you'll be saving running your applications in containers.
+
+There are many more topics related to running applications in containers. These lessons just touch on a few of the basic topics to get with which to get started. 
+
+Some advanced topics include:
+
+* <a href="https://github.com/hexops/dockerfile/" target="_blank">Container Hardening</a>
+* <a href="https://docs.docker.com/engine/swarm/" target="_blank">Docker Swarm</a>
+* <a href="https://docs.docker.com/compose/" target="_blank">Docker Compose</a>
+
+There are a lot of Banner schools at this point running their Banner applications in containers. If you ever get stuck, post a message to the eCommunities or the BannerDBA list. Whether you choose to run containers on-prem or in the cloud, someone has already done it and has probably already run into the problem you're probably having. So never be afraid to ask.
+
+Containers are also a great way to test out new things, just because they are so disposable. Create, destroy, modify, repeat, until you are completely satisified.
 

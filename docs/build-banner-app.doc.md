@@ -7,38 +7,49 @@ draft: true
 lang: en
 ---
 # Building a Banner Application
-## What do we know about Banner apps?
 
-Just about all Banner applications need certain things in their Tomcat environments:
-* jarfiles
-* Database connections - although not all applications need the same datasources
-* Timezone settings
-* Logging settings
-* SSL configuration, if desired
-* Setting up to run as service 
-
-Having each application in a self-contained environment isolates it from anything else in the network. If it gets compromised, just destroy it and recreate it. The container is not meant to last, so don't get attached to it. It is meant to be disposable.
-
-Let's start building a Banner application container using the custom tomcat image we just created. 
+In this exercise we will build a Docker container to run a Banner application. One of the nice things about containers is that they are very portable and are easily repeatable. Once we get one good working container for one Banner application, we'll be able to copy it for just about all of the other Banner applications we know about with little modifications.
 
 We're going to use applicationNavigator as our example since it is pretty low weight. 
 
-Create a new directory to store the files related to the container and let's start bulding the Dockerfile with our custom tomcat image:
+Let's start by preparing the work space by creating a directory for all of our files and then change to that directory. 
 
 ```bash
 mkdir applicatonNavigator
 cd applicationNavigator
+```
+## What do we know about Banner apps?
+
+Just about all Banner applications need certain things in their Tomcat environments:
+
+- jarfiles
+- Database connections - although not all applications need the same datasources
+- Timezone settings
+- Logging settings
+- SSL configuration, if desired
+- Setting up to run as service 
+
+Having each application in a self-contained environment isolates it from anything else in the network. If it gets compromised, just destroy it and recreate it. The container is not meant to last, so don't get attached to it. It is meant to be disposable.
+
+We're going to need a Dockerfile for our Banner application and we'll use  our custom tomcat image that we just created:
+
+```bash
 nano Dockerfile
 ```
 
-## Starting the Dockerfile
+```{.dockerfile title=Dockerfile}
+FROM mytomcat:8.5.82-2
+```
+
+## Building the Dockerfile
 
 What should our Dockerfile start to look like? What are we going to need?
-* tomcat image
-* war files
-* jar files
 
-```dockerfile
+- tomcat image
+- war files
+- jar files
+
+```{.dockerfile title=Dockerfile}
 FROM mytomcat:8.5.82-2
 
 #COPY webapps/*.war /usr/local/tomcat/webapps
@@ -63,10 +74,11 @@ mkdir webapps
 When ready, the appliationNavigator.war can be copied into this webapps directory so when the container is built, the war file will exist inside the container (provided the comment has been removed in the Dockerfile - until then, we're going to leave that commented).
 
 What else can we add to the tomcat environment that might be application specific?
-* environment variables
-* datasources
-* JAVA_OPTS
-* perhaps something to process the environment variables
+
+- environment variables
+- datasources
+- JAVA_OPTS
+- perhaps something to process the environment variables
 
 This is where things get a little interesting and totally customizable. The easy way to handle what we're about to do would be to have a local copy of the server.xml and context.xml in the working directory, then use docker COPY commands to add them to the container. While that would be easy, it would also be a security risk as the server.xml contains a plain text password. Not a real good plan if you're pushing this to a code repository of some sort. Best practice is to NEVER store secrets in a code repository. 
 
@@ -76,7 +88,7 @@ So how do we get around copying entire files with sensitive data? We use environ
 
 Let's start with some environment variables related to the datasources that we know we need to add to the server.xml and context.xml files.
 
-```dockerfile
+```{.dockerfile title=Dockerfile}
 ENV TCDS_BP_USER="banproxy" \
     TCDS_BP_JDBC_URL="jdbc:oracle:thin:@host:port/dbservice" \
     TCDS_BP_JNDI_NAME="jdbc/bannerDataSource"
@@ -86,7 +98,7 @@ ENV TCDS_SS_USER="ban_ss_user" \
     TCDS_SS_JNDI_NAME="jdbc/bannerSsbDataSource"
 ```
 
-The environment variables can be anything. Note the continuation character "\". Each command in the Dockerfile will create a new layer in the image. The more layers, the bigger the image. To create smaller images, create fewer layers, combine like commands whenever possible. Environment variables are a great place to reduce the number of layers in an image.
+The environment variables can be anything. Note the continuation character **\\**. Each command in the Dockerfile will create a new layer in the image. The more layers, the bigger the image. To create smaller images, create fewer layers, combine like commands whenever possible. Environment variables are a great place to reduce the number of layers in an image.
 
 Once the environment variable exists, they can be used anywhere in the container, most notably in scripting languages, like bash scripts. We know we need to add datasource information to the server.xml. We know most of it is static information. Let's start with a template.
 
@@ -219,7 +231,7 @@ There's one more thing we'll add to our run script, so we'll set that aside for 
 
 We also know the setenv.sh needs to be updated with the appropriate JAVA_OPTS. We can use environment variables to add that information as well.
 
-```dockerfile
+```{.dockerfile title=Dockerfile}
 ENV TOMCAT_JAVA_HOME="/usr/local/openjdk-8" \
     TOMCAT_ROOT="/usr/local/tomcat" \
     TOMCAT_JAVA_OPTS="-Djava.awt.headless=true -Duser.timezone=America/Chicago" \
@@ -256,7 +268,7 @@ bin/catalina.sh run
 
 Let's update the Dockerfile now to make sure our templates get into the container and then finish off the rest of the Dockerfile to expose the tomcat port and run our script.
 
-```dockerfile
+```{.dockerfile title=Dockerfile}
 COPY --chown=tomcat:tomcat templates /tmp/
 COPY --chown=tomcat:tomcat run.sh /run.sh
 
@@ -272,6 +284,7 @@ CMD /run.sh
 ## Ready to build Banner App
 
 We're now ready to test out the build of our first Banner application. Before we start the build, what do we know from the start?
+
 1. There is no war file, so the container should start pretty quickly
 2. We should see errors connecting the datasource since we have not specified any real database information
 
@@ -339,14 +352,14 @@ cp ../build.sh .
 
 Let's add a few things to the build script. First, we'll need to prompt for the password information.
 
-```bash
+```{.bash title=build.sh}
 if [ ! -n "$bppw" ]; then read -sp 'Enter banproxy password: ' bppw; echo ""; fi
 if [ ! -n "$sspw" ]; then read -sp 'Enter ban_ss_user password: ' sspw; echo ""; fi
 ```
 
 Now that we have the values, we'll need to do something with them. We can pass environment variables on the docker command line. Also, remember to unset the variables so we don't leave passwords lingering around.
 
-```bash
+```{.bash title=build.sh}
 [ -n "$bppw" ] && [ -n "$sspw" ] && docker run --name $CNTRNAME -p $PORTNUM:8080 -d -e TCDS_BP_PASSWORD=$bppw -e TCDS_SS_PASSWORD=$sspw $APPIMG:$APPVER
 
 unset bppw
@@ -388,13 +401,14 @@ However you chose to handle secrets, you now know it is possible to process them
 We mentioned previously that containers are meant to be disposal. As such, when the container is terminated, so are all the files that are stored within it. This means that all the data is lost. Have no fear. If there is ever a need for data to persist past the termination of the container, we can attach a host known device and reference that device inside the container as a volume.
 
 What Banner applications can we think of that would require persistent data?
-* Banner Extensibilty - pbroot directory location
-* Student Self Service - extensions and photo images
-* Faculty Self Service - extensions
-* Employee Self Service - photo images
-* Banner 8 Self Service - photo images
-* Admin Pages - photo images
-* Ethos API Management Center - config settings
+
+- Banner Extensibilty - pbroot directory location
+- Student Self Service - extensions and photo images
+- Faculty Self Service - extensions
+- Employee Self Service - photo images
+- Banner 8 Self Service - photo images
+- Admin Pages - photo images
+- Ethos API Management Center - config settings
 
 Some volumes we attach will need to be read only and some will need to have read/write access. In the above list, can you identify which volumes would need which type of access?
 
@@ -422,7 +436,7 @@ mkdir test-rw
 
 With our directories created, let's add the COPY statements to our Dockerfile.
 
-```{.dockerfile title=applicationNavigator/Dockerfile}
+```{.dockerfile title=Dockerfile}
 COPY --chown=tomcat:tomcat test-ro /test-ro
 COPY --chown=tomcat:tomcat test-rw /test-rw
 ```
@@ -442,7 +456,7 @@ sudo touch /mnt/img/test-rw/file4.txt
 
 Now let's add the necessary parameters to our docker build statement so we can access the files within the container.
 
-```{.bash title=applicationNavigator/build.sh}
+```{.bash title=build.sh}
 [ -n "$bppw" ] && [ -n "$sspw" ] && docker run --name $CNTRNAME -p $PORTNUM:8080 -d -e TCDS_BP_PASSWORD=$bppw -e TCDS_SS_PASSWORD=$sspw -v /mnt/img/test-ro:/test-ro:ro -v /mnt/img/test-rw:/test-rw $APPIMG:$APPVER
 ```
 
@@ -454,7 +468,11 @@ Let's rebuild the container
 
 We can inspect the structure of the container using the docker inspect command. The structure is displayed in json format.
 
-```{.json title=docker inspect applicationNavigator}
+```bash
+docker inspect applicationNavigator
+```
+
+```json
 "Mounts": [
     {
         "Type": "bind",

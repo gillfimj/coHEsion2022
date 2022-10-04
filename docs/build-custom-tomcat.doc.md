@@ -7,13 +7,22 @@ draft: true
 lang: en
 ---
 # Building the Tomcat Image
+In this exercise we will be building a custom Tomcat image from the official image available on Docker Hub. In the previous lesson, we explored how to search Docker Hub for specific images.For this exercise, we will look for the **latest Tomcat version of 8.5 for OpenJDK 8**. 
+
+To prepare the space for this exercise, create a directory for the customized files called "tomcat1", then change into that directory.
+
+```bash
+mkdir tomcat1
+cd tomcat1
+```
+
 ## Create the baseline Tomcat image
 
 Start with the official docker image which can be found at: [https://hub.docker.com/_/tomcat](https://hub.docker.com/_/tomcat)
 
-Create a Dockerfile with the following contents:
+Create a file called ***Dockerfile*** with the following contents:
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile }
 FROM tomcat:8.5-jdk8-openjdk
 
 EXPOSE 8080
@@ -57,7 +66,7 @@ Looks quite different now.
 
 Remove the webapps.dist from the container build by modifying the Dockerfile.
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile }
 FROM tomcat:8.5-jdk8-openjdk
 
 RUN rm -Rf $CATALINA_HOME/webapps.dist
@@ -83,7 +92,7 @@ Let's look inside the container again and make sure the directory we removed is 
 
 How do we know if the Tomcat image is update to date with the patching of packages? We don't. Let's make sure that happens by adding some lines to the RUN command.
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile }
 RUN rm -Rf $CATALINA_HOME/webapps.dist \
  && apt-get update -y  \
  && apt-get upgrade -y
@@ -91,7 +100,7 @@ RUN rm -Rf $CATALINA_HOME/webapps.dist \
 
 Since we need to go through the same steps to stop and rebuild the contain - AGAIN - let's write a script to do that. Seems like it might be useful.
 
-```bash
+```{.bash title=build.sh}
 export CNTRNAME=$1
 export APPIMG=$2
 
@@ -109,7 +118,7 @@ Note the new statement being executed "docker rmi". This will remove the image f
 
 What about making a consistent directory for application logs?
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile }
 ENV APP_LOGS=/app_logs
 
 RUN rm -Rf $CATALINA_HOME/webapps.dist \
@@ -120,7 +129,7 @@ RUN rm -Rf $CATALINA_HOME/webapps.dist \
 
 Is there anything else we can do to customize the image before we're ready to call it good to use?
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile }
 RUN rm -Rf $CATALINA_HOME/webapps.dist \
  && mkdir -p $APP_LOGS \
  && apt-get update -y  \
@@ -161,7 +170,7 @@ The list of images should show our newly created tomcat image.
 
 The default tag on the image is "latest". That's fine for a single image. What if you need to track images by version. At some point, Tomcat will need to be updated and you may not want all of your containers running the "latest" version yet because you want to test things out first. Tagging can help describe images in a bit more detail. Right now, we have no idea what version of Tomcat our newly created image is using. That is probably not a good thing. Let's fix that.
 
-```bash
+```{.bash title=build.sh}
 # 
 # Parameters:
 #   1 - Container name
@@ -198,13 +207,13 @@ Oh no! We got an error. What did we forget to do?
 
 When we built the image with the tag that included the version, we failed to include that tag on the "run" statement.
 
-```dockerfile
+```{.bash title=build.sh}
 docker run --name $CNTRNAME -p $PORTNUM:8080 -d $APPIMG
 ```
 
 Easy fix. Let's make sure we didn't miss anything else.
 
-```dockerfile
+```{.bash title=build.sh}
 docker rmi $APPIMG:$APPVER
 
 docker run --name $CNTRNAME -p $PORTNUM:8080 -d $APPIMG:$APPVER
@@ -213,7 +222,7 @@ docker run --name $CNTRNAME -p $PORTNUM:8080 -d $APPIMG:$APPVER
 ## Enable locale support
 While browsing the image layers of the Official Tomcat image, we noticed the LANG variable was set to C.UTF-8. That's not a support value for Banner applications. Let's address that.
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile }
 ### Locale support for en_US.UTF-8 according to Ellucian Article 000009690
 RUN touch /usr/share/locale/locale.alias \
  && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen \
@@ -235,7 +244,7 @@ root@f73ed5a6b708:/usr/local/tomcat#
 
 The user the container is running as is **root**. According to security best practices, that's bad. Let's address that.
 
-```dockerfile
+```{.dockerfile title=tomcat1/Dockerfile }
 RUN groupadd -r -g 10001 tomcat \
  && useradd -rm -g tomcat -s /bin/bash -u 10000 tomcat \
  && chgrp -R tomcat $CATALINA_HOME \
@@ -259,7 +268,7 @@ tomcat@bce46116277f:/usr/local/tomcat$
 
 It looks like we're making great progress. But we really only need this to be built as an image and not a full running container. Let's build a specific script just to build the image and not run a container. We're also going to set it up to push to a remote repository.
 
-```{.bash title=buildspec.sh}
+```{.bash title=tomcat1/buildspec.sh}
 #
 # Parameters:
 #   1 - Image name to be created
