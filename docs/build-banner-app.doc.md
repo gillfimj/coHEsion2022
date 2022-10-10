@@ -134,7 +134,7 @@ We also know the datasource will need a corresponding entry in the context.xml. 
 
 Now we should be able to create any datasource we need for any Banner application at any time by simply setting the right environment variables and parsing the template correctly. This is where it gets creative as there are many ways to parse text files.
 
-Let's start building our bash script to parse the templates.
+Let's start building our bash script to parse the templates by creating a ***run.sh*** script.
 
 First we need a way out in case of failure, and of course backup the originals.
 
@@ -238,7 +238,7 @@ ENV TOMCAT_JAVA_HOME="/usr/local/openjdk-8" \
     TOMCAT_CATALINA_OPTS="-Xms2G -Xmx4G -Doracle.jdbc.autoCommitSpecCompliant=false -Dbanner.logging.dir=/app_logs -Djava.security.egd=file:/dev/../dev/urandom -server -XX:+UseParallelGC"
 ```
 
-Let's create the template of the setenv.sh
+Let's create the template of the ***setenv.sh***
 
 ```{.bash title=templates/setenv.sh}
 JAVA_HOME="${TOMCAT_JAVA_HOME}"; export JAVA_HOME
@@ -248,7 +248,7 @@ CATALINA_OPTS="${TOMCAT_CATALINA_OPTS}"; export CATALINA_OPTS
 CATALINA_PID="${CATALINA_HOME}/pid"; export CATALINA_PID
 ```
 
-Now we can finish our run.sh script and startup tomcat
+Now we can finish our ***run.sh*** script and startup tomcat
 
 ```{.bash title=run.sh}
 #
