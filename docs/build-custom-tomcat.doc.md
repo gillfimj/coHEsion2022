@@ -276,12 +276,12 @@ It looks like we're making great progress. But we really only need this to be bu
 #   3 - One-up build number to generate
 #
 # Usage: . buildspec.sh <imageName> <version> <number>
-#   Example: . buildspec.sh tomcat 8.5.82 1
+#   Example: . buildspec.sh tomcat 8.5.82 1 dockergenius17
 #
 IMAGE_REPO_NAME=$1
 APP_VERSION=$2
 BUILD_NUM=$3
-ACCOUNT_INFO=<your docker hub account>
+ACCOUNT_INFO=$4 #<your docker hub account>
 
 echo "Building the Docker image..."
 docker build -t $IMAGE_REPO_NAME:$APP_VERSION-$BUILD_NUM .
@@ -294,8 +294,21 @@ This script will allow the creation of the image with a specific build number in
 
 The tag and push commands will allow the image to be pushed to an image repository which can then be pulled from a remote location. This is good when needing to reference the images from multiple locations. The images that have been created up to now have all be to the local repository on the machine being used and cannot be referenced outside of the machine. This is why it is essential to have access to a remote repository of some sort.
 
-We are now ready to use this image with a Banner application! Make note of the image name, version and build number used as those will be needed in the next task.
+Let's create a version of our custom tomcat image with a specific build number.
 
+```bash
+. buildspec.sh mytomcat 8.5.82 1 dockergenius17
+```
+
+We are now ready to use this image with a Banner application! Make note of the image name, version and build number used as those will be needed in the next task. ***NOTE: your build number may not match the build number in this example or the build number used in future lessons.***
+
+If you get logged out of your docker hub account you may get a permissions denied error when trying to push the image to your repository. If that happens, just log back in to your docker hub account as follows:
+
+```bash
+docker login
+Username: dockergenius17
+Password:
+```
 
 
 
