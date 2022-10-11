@@ -8,7 +8,7 @@ lang: en
 ---
 # Setting up Docker Desktop on Windows
 
-Before installing Docker Desktop on Windows, we'll need to install the Windows Subsystem for Linux 2. This will create a Ubuntu Linux environment from which we we'll interact with Docker once it is installed. Before proceeding, make sure you have Administrative rights on the machine where these installations will occur. Windows 11 was used as the basis for these illustrations, however, Windows 10 can also be used.
+Before installing Docker Desktop on Windows, we will need to install the Windows Subsystem for Linux 2. This will create a Ubuntu Linux environment from which we will interact with Docker once it is installed. Before proceeding, make sure you have Administrative rights on the machine where these installations will occur. Windows 11 was used as the basis for these illustrations, however, Windows 10 can also be used. However, Windows 10 has been known to cause issues with the need to run/install Hyper-V which can cause conflicts with other virtualization software like VirtualBox.
 
 ## Install Windows Subsystem for Linux 2 (WSL2)
 
@@ -17,6 +17,15 @@ To install WSL2 on Windows 10 or Windows 11, please review the prerequisites at:
 <a href="https://docs.docker.com/desktop/install/windows-install/" target="_blank">https://docs.docker.com/desktop/install/windows-install/</a>
 
 ***Please note, you do not need to run Hyper-V in order to run Docker Desktop on Windows. If you're going down the path of turning on Hyper-V stop. It's not needed for this exercise.***
+
+However, you still do need to have the Virtual Machine Platform enabled. Most Windows 10 and Windows 11 pre-installations come with this feature already turned on. Before going too much further, verify this feature is enabled. 
+
+1. Select **Start**, enter **Windows features**, and select **Turn Windows features on or off** from the list of results.
+2. In the Windows Features window that just opened, find **Virtual Machine Platform**. If the box is already check, great, your job is done and you can skip the next part of the installation, otherwise, select this feature to be enabled.
+
+![](img/install-docker-desktop/virtual-machine-platform.png)
+
+3. Select **OK**. Restart your PC if necessary.
 
 Review the installation procedure at: 
 
@@ -67,6 +76,25 @@ Please review the FAQs for more details related to the licensing of Docker Deskt
 If you really want to get around the licensing restrictions for Docker Desktop, you can manually install the Docker CLI components into your Ubuntu environment once WSL2 is configured, then install Portainer as a GUI view into your containers. Here's a reference on how to get started:
 
 <a href="https://betterprogramming.pub/how-to-install-docker-without-docker-desktop-on-windows-a2bbb65638a1" target="_blank">https://betterprogramming.pub/how-to-install-docker-without-docker-desktop-on-windows-a2bbb65638a1</a>
+
+### Rate Limiting
+Docker Hub introduced rate limiting on image pulls from their repositories. It is possible that you may encounter messages like "***You have reached your pull limit***." First, make sure you are logged in to Docker Hub via Docker Desktop. Open a Linux command window ![](./img/docker-hub/linux-icon.png), check your current pull rate statistics:
+
+```bash
+sudo apt-get update
+sudo apt-get install jq
+TOKEN=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+curl --head -H "Authorization: Bearer $TOKEN" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest
+```
+
+This will produce the header information from the pull request. The lines of interest will be:
+
+```bash
+ratelimit-limit: 100;w=21600
+ratelimit-remaining: 100;w=21600
+```
+
+This means that the rate limit is 100 pulls per 21600 seconds (6 hours) and there are 100 pulls remaining. We will want to keep an eye on this during the course of this workshop.
 
 ## Testing the Docker Desktop Installation
 

@@ -90,7 +90,7 @@ Let's look inside the container again and make sure the directory we removed is 
 
 ## Multiple commands at once
 
-How do we know if the Tomcat image is update to date with the patching of packages? We don't. Let's make sure that happens by adding some lines to the RUN command.
+How do we know if the Tomcat image is up to date with the patching of packages? We don't. Let's make sure that happens by adding some lines to the RUN command.
 
 ```{.dockerfile title=tomcat1/Dockerfile }
 RUN rm -Rf $CATALINA_HOME/webapps.dist \
@@ -292,7 +292,7 @@ docker push $ACCOUNT_INFO/$IMAGE_REPO_NAME:$APP_VERSION-$BUILD_NUM
 
 This script will allow the creation of the image with a specific build number in case there is a need to run different images at the same time.
 
-The tag and push commands will allow the image to be pushed to an image repository which can then be pulled from a remote location. This is good when needing to reference the images from multiple locations. The images that have been created up to now have all be to the local repository on the machine being used and cannot be referenced outside of the machine. This is why it is essential to have access to a remote repository of some sort.
+The tag and push commands will allow the image to be pushed to an image repository which can then be pulled from a remote location. This is good when needing to reference the images from multiple locations. The images that have been created up to now have all been pushed to the local repository on the machine and cannot be referenced outside of that machine. This is why it is essential to have access to a remote repository of some sort.
 
 Let's create a version of our custom tomcat image with a specific build number.
 

@@ -10,7 +10,7 @@ lang: en
 
 Github is a platform that provides a service for hosting repositories for source code management. For those interested in getting started in source code management, Github provides the ability to create free accounts to create public and/or private repositories that can be shared for any project imaginable.
 
-While public repositories are open to anyon, access to private repositories is granted only to specific accounts. Here's a quick way to get started.
+While public repositories are open to anyone, access to private repositories is granted only to specific accounts. Here's a quick way to get started.
 
 ## Getting started
 
@@ -36,7 +36,7 @@ Enter a password according to the designated password rules.
 
 ### Create username
 
-Enter a username that is relatively unique but yet something that will help other know who you are as this will be used to tag any updates to the repository.  This is what you'll use to login.
+Enter a username that is relatively unique but yet something that will help others know who you are as this will be used to tag any updates to the repository.  This is what you'll use to login.
 
 ![](./img/github/enter-username.png)
 
@@ -96,7 +96,7 @@ After you click on the New button, you will need to give your repository a name.
 
 ### Repository Description
 
-The repository description is option. However, it can be helpful to know why this repo exists and what its purpose is. Keep it short, but descriptive.
+The repository description is optional. However, it can be helpful to know why this repo exists and what its purpose is. Keep it short, but descriptive.
 
 ![](img/github/repo-desc.png)
 

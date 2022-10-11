@@ -357,7 +357,7 @@ if [ ! -n "$bppw" ]; then read -sp 'Enter banproxy password: ' bppw; echo ""; fi
 if [ ! -n "$sspw" ]; then read -sp 'Enter ban_ss_user password: ' sspw; echo ""; fi
 ```
 
-Now that we have the values, we'll need to do something with them. We can pass environment variables on the docker command line. Also, remember to unset the variables so we don't leave passwords lingering around.
+Now that we have the values, we'll need to do something with them. We can pass environment variables on the docker command line by modifying the docker run statement. Also, remember to unset the variables so we don't leave passwords lingering around.
 
 ```{.bash title=build.sh}
 [ -n "$bppw" ] && [ -n "$sspw" ] && docker run --name $CNTRNAME -p $PORTNUM:8080 -d -e TCDS_BP_PASSWORD=$bppw -e TCDS_SS_PASSWORD=$sspw $APPIMG:$APPVER
@@ -426,6 +426,8 @@ While there is no functional need to have a persistent volume on the application
 
 Since we have locked down the container to the run as the tomcat user, we will not be able to create any new directories. We can get around that by using the COPY command and copying a stub directory from the host.
 
+A stub directory is something that is only known to the container upon container creation time and is pulled in from an alternate location. In this case, since the tomcat image is locked down from creating directories under certain locations and we know the the docker COPY command can carry ownership privileges with it, we can initially create the directories we need with the ownership of the tomcat user so the application can act upon the directory space.
+
 Let's create two stub directories, one for testing the read only functionality and one for testing the read/write access. Keep in mind, these are just stub directories and not the real volumes that will be mounted to the container. We just these directories so we can create the devices inside the container. Just as the directories need to exist before we mount a device on a typical OS system, so too do they need to exist in a container before we attempt to mount them.
 
 ```bash
@@ -449,7 +451,7 @@ We need to create the source volumes that we plan to mount to the containers and
 sudo mkdir /mnt/img/test-ro -p
 sudo mkdir /mnt/img/test-rw -p
 sudo touch /mnt/img/test-ro/file1.txt
-sudo touch /mnt/img/test-ro/file2.txt
+sudo echo "The quick brown fox jumped over the lazy dog." >/mnt/img/test-ro/file2.txt
 sudo touch /mnt/img/test-rw/file3.txt
 sudo touch /mnt/img/test-rw/file4.txt
 ```
@@ -548,18 +550,13 @@ sudo chown 10000:10001 -R /mnt/img
 docker exec -it applicationNavigator /bin/bash
 
 #Insides the container
-ls -lR /home/tomcat
-/home/tomcat:
-total 8
-drwxr-xr-x 2 tomcat tomcat 4096 Sep 25 15:13 test-ro
-drwxr-xr-x 2 tomcat tomcat 4096 Sep 25 14:34 test-rw
-
-/home/tomcat/test-ro:
+ls -lR /test*
+/test-ro:
 total 8
 -rw-r--r-- 1 tomcat tomcat 86 Sep 25 15:13 file1.txt
 -rw-r--r-- 1 tomcat tomcat 46 Sep 25 15:13 file2.txt
 
-/home/tomcat/test-rw:
+/test-rw:
 total 0
 -rw-r--r-- 1 tomcat tomcat 0 Sep 25 14:34 file3.txt
 -rw-r--r-- 1 tomcat tomcat 0 Sep 25 14:34 file4.txt

@@ -28,6 +28,7 @@ Let's explore a bit. The menu at the top of the page provides the gateway to all
 ![](./img/docker-hub/docker-menu.png)
 
 ## Explore
+
 Explore allows you to browse the vast list of images available in the Docker repositories. At any point, you can use the search box to search for images within the site. Be careful, though. Anyone can post images to the repositories on this site. Some images are officially supported by Docker, some are not. It is important to know the difference. Official images supported by Docker will be identified with the following graphic:
 
 ![](./img/docker-hub/official-docker-image.png)
@@ -35,9 +36,11 @@ Explore allows you to browse the vast list of images available in the Docker rep
 For the purposes of this workshop, we'll be using the official Tomcat image supported by Docker. 
 
 ## Repositories
+
 Repositories shows the list of your the repositories in your account. You can create public or private repositories for specific projects. In a free Docker Hub account, you can have only 1 private repo but any number of public repos. For the purpose of this workshop, we'll be creating a repository to store the images we create.
 
 Let's create two repositories, one for Tomcat and one for a Banner application:
+
 * Click on ![](./img/docker-hub/create-repo.png)
 * Enter a name for the repository, like "***mytomcat***".
 * Enter a description for the repository, like "***Custom Tomcat for Banner docker training at CoHEsion 2022***."
@@ -48,26 +51,8 @@ Repeat the above steps for creating a Banner Application repository. We'll use A
 
 You should now have two repositories. We will come back to these later in the workshop.
 
-## Rate Limiting
-Docker Hub introduced rate limiting on image pulls from their repositories. It is possible that you may encounter messages like "***You have reached your pull limit***." First, make sure you are logged in to Docker Hub via Docker Desktop. Open a Linux command window ![](./img/docker-hub/linux-icon.png), check your current pull rate statistics:
-
-```bash
-sudo apt-get update
-sudo apt-get install jq
-TOKEN=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
-curl --head -H "Authorization: Bearer $TOKEN" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest
-```
-
-This will produce the header information from the pull request. The lines of interest will be:
-
-```bash
-ratelimit-limit: 100;w=21600
-ratelimit-remaining: 100;w=21600
-```
-
-This means that the rate limit is 100 pulls per 21600 seconds (6 hours) and there are 100 pulls remaining. We'll want to keep an eye on this during the course of this workshop.
-
 ## Searching the Repo
+
 Let's search for the Tomcat image we're going to be using. In the Search box type "***tomcat***"
 
 ![](./img/docker-hub/tomcat-docker.png)
@@ -108,6 +93,7 @@ Note the repository and tag notation on the pull command:
 We'll need this later in the workshop.
 
 Search Review
+
 * Find the right image to use by narrowing the search filter
 * Review the Image Layers used to create the image to fully understand what the image contains
 * Note the Pull command contents - this will be used in the Dockerfile we will create
