@@ -3,7 +3,7 @@ title: Install Docker Desktop
 subtitle: Step-by-step installation of Docker Desktop on Windows
 author: 
   - Marianne Gillfillan, Senior DBA & Cloud Architect
-draft: true
+draft: false
 lang: en
 ---
 # Setting up Docker Desktop on Windows

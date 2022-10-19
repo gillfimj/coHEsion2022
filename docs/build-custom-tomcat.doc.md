@@ -3,7 +3,7 @@ title: Building a Custom Tomcat Image
 subtitle: Creating a custom Tomcat Image for Docker
 author: 
   - Marianne Gillfillan, Senior DBA & Cloud Architect
-draft: true
+draft: false
 lang: en
 ---
 # Building the Tomcat Image

@@ -3,7 +3,7 @@ title: Getting Familiar with Docker Hub
 subtitle: Step-by-step introduction to Docker Hub
 author: 
   - Marianne Gillfillan, Senior DBA & Cloud Architect
-draft: true
+draft: false
 lang: en
 ---
 # Getting Familiar with Docker Hub

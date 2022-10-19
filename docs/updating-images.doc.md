@@ -3,7 +3,7 @@ title: Updating Docker Images
 subtitle: How to update Banner Applications from updated Docker images
 author: 
   - Marianne Gillfillan, Senior DBA & Cloud Architect
-draft: true
+draft: false
 lang: en
 ---
 # Updating Images

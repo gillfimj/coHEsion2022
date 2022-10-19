@@ -3,7 +3,7 @@ title: Getting Started on Github
 subtitle: Step-by-step introduction to Setting up a Github Account
 author: 
   - Marianne Gillfillan, Senior DBA & Cloud Architect
-draft: true
+draft: false
 lang: en
 ---
 # Setting up a new account
