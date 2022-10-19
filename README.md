@@ -3,7 +3,7 @@ title: README
 subtitle: Workshop Introduction
 author: 
   - Marianne Gillfillan, Senior DBA & Cloud Architect
-draft: true
+draft: false
 lang: en
 ---
 # CoHEsion Conference 2022
