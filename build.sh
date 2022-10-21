@@ -22,7 +22,7 @@ docker rm $CNTRNAME
 echo "Removing image..."
 docker rmi $APPIMG
 docker build -t $APPIMG:$APPVER .
-[ -n "$bppw" ] && [ -n "$sspw" ] && docker run --name $CNTRNAME -p $PORTNUM:8080 -d -e TCDS_BP_PASSWORD=$bppw -e TCDS_SS_PASSWORD=$sspw --restart unless-stopped  $APPIMG:$APPVER
+[ -n "$bppw" ] && [ -n "$sspw" ] && docker run --name $CNTRNAME -p $PORTNUM:8080 -d -e TCDS_BP_PASSWORD=$bppw -e TCDS_SS_PASSWORD=$sspw -v /mnt/img/test-ro:/test-ro:ro -v /mnt/img/test-rw:/test-rw --restart unless-stopped  $APPIMG:$APPVER
 
 unset bppw
 unset sspw
