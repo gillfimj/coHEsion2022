@@ -1,0 +1,1 @@
+<ResourceLink global="jdbcDatasource" name="jdbcDatasource" type="javax.sql.DataSource"/>
